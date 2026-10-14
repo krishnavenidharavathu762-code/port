@@ -1,0 +1,49 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  storageAccountName: 'kittuportfoliostg2026'
+
+steps:
+  - checkout: self
+
+  - task: AzureCLI@2
+    displayName: 'Deploy Portfolio to Azure Storage'
+    inputs:
+      azureSubscription: 'krishna-conn'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        set -euo pipefail
+
+        echo "Checking portfolio files..."
+
+        test -f "$(Build.SourcesDirectory)/index.html"
+        test -f "$(Build.SourcesDirectory)/profile.jpg"
+
+        echo "Uploading index.html..."
+
+        az storage blob upload \
+          --account-name "$(storageAccountName)" \
+          --container-name '$web' \
+          --name 'index.html' \
+          --file "$(Build.SourcesDirectory)/index.html" \
+          --auth-mode login \
+          --overwrite true \
+          --content-type 'text/html; charset=utf-8'
+
+        echo "Uploading profile.jpg..."
+
+        az storage blob upload \
+          --account-name "$(storageAccountName)" \
+          --container-name '$web' \
+          --name 'profile.jpg' \
+          --file "$(Build.SourcesDirectory)/profile.jpg" \
+          --auth-mode login \
+          --overwrite true \
+          --content-type 'image/jpeg'
+
+        echo "Portfolio deployment completed successfully!"
