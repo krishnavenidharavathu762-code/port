@@ -4,54 +4,51 @@ trigger:
     include:
       - main
 
-pr:
-  branches:
-    include:
-      - main
-
 pool:
   vmImage: ubuntu-latest
 
 variables:
-  - group: portfolio-swa-secrets
+  # Azure DevOps Service Connection for Terraform only
+  - name: terraformServiceConnection
+    value: 'krishna-conn'
 
-  # Use '.' when index.html is in the repository root.
-  # Otherwise, set this to your website subfolder.
+  # Website source folder; change if index.html is elsewhere
   - name: siteSource
     value: '.'
 
+  # Keep false until you have added the SWA token as a secret
+  # pipeline variable named swaDeploymentToken.
+  - name: enableStaticDeployment
+    value: 'false'
+
 stages:
 
-# -----------------------------------------------------
-# STAGE 1: CI - Validate static files
-# -----------------------------------------------------
+# =====================================================
+# STAGE 1: CI - Build and validate website
+# =====================================================
 - stage: Build_Test
-  displayName: 'Stage 1 - Build and Test'
+  displayName: 'Stage 1 - CI Build and Test'
   jobs:
     - job: ValidateSite
-      displayName: 'Validate portfolio website'
       steps:
         - checkout: self
 
         - bash: |
             set -euo pipefail
-
             SOURCE="$(siteSource)"
             OUTPUT="$(Build.ArtifactStagingDirectory)/site"
 
-            if [ ! -f "$SOURCE/index.html" ]; then
+            test -f "$SOURCE/index.html" || {
               echo "ERROR: index.html not found in $SOURCE"
-              echo "Change siteSource to the folder containing index.html."
               exit 1
-            fi
+            }
 
-            if ! grep -Eiq '<html([[:space:]>])' "$SOURCE/index.html"; then
-              echo "ERROR: HTML root element not found."
+            grep -Eiq '<html([[:space:]>])' "$SOURCE/index.html" || {
+              echo "ERROR: No HTML root element found."
               exit 1
-            fi
+            }
 
             mkdir -p "$OUTPUT"
-
             rsync -av \
               --exclude='.git/' \
               --exclude='node_modules/' \
@@ -61,40 +58,175 @@ stages:
               "$SOURCE/" "$OUTPUT/"
 
             test -s "$OUTPUT/index.html"
+            echo "Website validation passed."
+          displayName: 'Validate and package static files'
 
-            echo "Portfolio files validated."
-            find "$OUTPUT" -type f -print
-          displayName: 'Validate and prepare static website'
-
-# -----------------------------------------------------
-# STAGE 2: CI - Publish artifact
-# -----------------------------------------------------
+# =====================================================
+# STAGE 2: Publish website artifact
+# =====================================================
 - stage: Publish
-  displayName: 'Stage 2 - Publish Artifact'
+  displayName: 'Stage 2 - Publish Website Artifact'
   dependsOn: Build_Test
-  condition: succeeded()
   jobs:
     - job: PublishSite
       steps:
         - publish: '$(Build.ArtifactStagingDirectory)/site'
           artifact: static-site
-          displayName: 'Publish static website artifact'
+          displayName: 'Publish static-site artifact'
 
-# -----------------------------------------------------
-# STAGE 3: CD - Deploy to preview environment
-# -----------------------------------------------------
-- stage: Deploy_Staging
-  displayName: 'Stage 3 - Deploy to Staging'
+# =====================================================
+# STAGE 3: Terraform init
+# =====================================================
+- stage: Terraform_Init
+  displayName: 'Stage 3 - Terraform Init'
   dependsOn: Publish
+  jobs:
+    - job: Init
+      steps:
+        - checkout: self
+
+        - task: AzureCLI@2
+          displayName: 'Terraform init'
+          inputs:
+            azureSubscription: $(terraformServiceConnection)
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript: |
+              set -euo pipefail
+
+              cd "$(Build.SourcesDirectory)/infra"
+
+              TF_VERSION="1.9.8"
+              curl -fsSLo /tmp/terraform.zip \
+                "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip"
+              sudo unzip -o /tmp/terraform.zip -d /usr/local/bin
+              terraform version
+              terraform init -input=false
+
+# =====================================================
+# STAGE 4: Terraform validate
+# =====================================================
+- stage: Terraform_Validate
+  displayName: 'Stage 4 - Terraform Validate'
+  dependsOn: Terraform_Init
+  jobs:
+    - job: Validate
+      steps:
+        - checkout: self
+
+        - task: AzureCLI@2
+          displayName: 'Format and validate Terraform'
+          inputs:
+            azureSubscription: $(terraformServiceConnection)
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript: |
+              set -euo pipefail
+
+              cd "$(Build.SourcesDirectory)/infra"
+
+              TF_VERSION="1.9.8"
+              curl -fsSLo /tmp/terraform.zip \
+                "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip"
+              sudo unzip -o /tmp/terraform.zip -d /usr/local/bin
+
+              terraform init -input=false
+              terraform fmt -check -recursive
+              terraform validate
+
+# =====================================================
+# STAGE 5: Terraform plan
+# =====================================================
+- stage: Terraform_Plan
+  displayName: 'Stage 5 - Terraform Plan'
+  dependsOn: Terraform_Validate
+  jobs:
+    - job: Plan
+      steps:
+        - checkout: self
+
+        - task: AzureCLI@2
+          displayName: 'Create Terraform plan'
+          inputs:
+            azureSubscription: $(terraformServiceConnection)
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript: |
+              set -euo pipefail
+
+              cd "$(Build.SourcesDirectory)/infra"
+
+              TF_VERSION="1.9.8"
+              curl -fsSLo /tmp/terraform.zip \
+                "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip"
+              sudo unzip -o /tmp/terraform.zip -d /usr/local/bin
+
+              terraform init -input=false
+              terraform plan -input=false -out=tfplan
+
+              mkdir -p "$(Build.ArtifactStagingDirectory)/tfplan"
+              cp tfplan "$(Build.ArtifactStagingDirectory)/tfplan/tfplan"
+
+        - publish: '$(Build.ArtifactStagingDirectory)/tfplan'
+          artifact: terraform-plan
+          displayName: 'Publish saved Terraform plan'
+
+# =====================================================
+# STAGE 6: Terraform apply
+# Configure approval on portfolio-infrastructure-production.
+# =====================================================
+- stage: Terraform_Apply
+  displayName: 'Stage 6 - Terraform Apply'
+  dependsOn: Terraform_Plan
+  condition: succeeded()
+  jobs:
+    - deployment: ApplyInfrastructure
+      displayName: 'Apply reviewed infrastructure plan'
+      environment: portfolio-infrastructure-production
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - checkout: self
+
+              - download: current
+                artifact: terraform-plan
+
+              - task: AzureCLI@2
+                displayName: 'Apply Terraform plan'
+                inputs:
+                  azureSubscription: $(terraformServiceConnection)
+                  scriptType: bash
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    set -euo pipefail
+
+                    cd "$(Build.SourcesDirectory)/infra"
+
+                    TF_VERSION="1.9.8"
+                    curl -fsSLo /tmp/terraform.zip \
+                      "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip"
+                    sudo unzip -o /tmp/terraform.zip -d /usr/local/bin
+
+                    terraform init -input=false
+                    terraform apply -input=false -auto-approve \
+                      "$(Pipeline.Workspace)/terraform-plan/tfplan"
+
+# =====================================================
+# STAGE 7: Deploy to Static Web Apps staging preview
+# =====================================================
+- stage: Deploy_Staging
+  displayName: 'Stage 7 - Deploy Staging'
+  dependsOn: Terraform_Apply
   condition: |
     and(
       succeeded(),
       eq(variables['Build.SourceBranch'], 'refs/heads/main'),
-      ne(variables['Build.Reason'], 'PullRequest')
+      eq(variables['enableStaticDeployment'], 'true')
     )
   jobs:
     - deployment: DeployStaging
-      displayName: 'Deploy portfolio preview'
+      displayName: 'Deploy staging preview'
       environment: portfolio-staging
       strategy:
         runOnce:
@@ -104,7 +236,7 @@ stages:
                 artifact: static-site
 
               - task: AzureStaticWebApp@0
-                displayName: 'Deploy staging preview'
+                displayName: 'Deploy to Static Web Apps preview'
                 inputs:
                   cwd: '$(Pipeline.Workspace)/static-site'
                   app_location: '/'
@@ -114,21 +246,22 @@ stages:
                   deployment_environment: 'staging'
                   azure_static_web_apps_api_token: $(swaDeploymentToken)
 
-# -----------------------------------------------------
-# STAGE 4: CD - Deploy to production
-# -----------------------------------------------------
+# =====================================================
+# STAGE 8: Deploy to production
+# Configure approval on portfolio-production.
+# =====================================================
 - stage: Deploy_Production
-  displayName: 'Stage 4 - Deploy to Production'
+  displayName: 'Stage 8 - Deploy Production'
   dependsOn: Deploy_Staging
   condition: |
     and(
       succeeded(),
       eq(variables['Build.SourceBranch'], 'refs/heads/main'),
-      ne(variables['Build.Reason'], 'PullRequest')
+      eq(variables['enableStaticDeployment'], 'true')
     )
   jobs:
     - deployment: DeployProduction
-      displayName: 'Deploy portfolio production website'
+      displayName: 'Deploy production website'
       environment: portfolio-production
       strategy:
         runOnce:
@@ -138,7 +271,7 @@ stages:
                 artifact: static-site
 
               - task: AzureStaticWebApp@0
-                displayName: 'Deploy production website'
+                displayName: 'Deploy to Static Web Apps production'
                 inputs:
                   cwd: '$(Pipeline.Workspace)/static-site'
                   app_location: '/'
