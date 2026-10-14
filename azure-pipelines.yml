@@ -1,0 +1,40 @@
+
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  websiteDirectory: '$(Build.SourcesDirectory)/site'
+  storageAccountName: 'kittuportfoliostg2026'
+
+steps:
+  - checkout: self
+
+  - task: AzureCLI@2
+    displayName: 'Deploy Portfolio to Azure Storage'
+    inputs:
+      azureSubscription: 'github.com_krishnavenidharavathu762-code'
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+
+        echo "Checking website files..."
+
+        test -f "$(websiteDirectory)/index.html" || {
+          echo "ERROR: index.html not found in site folder"
+          exit 1
+        }
+
+        echo "Uploading portfolio files to Azure Storage..."
+
+        az storage blob upload-batch \
+          --account-name "$(storageAccountName)" \
+          --auth-mode login \
+          --destination '$web' \
+          --source "$(websiteDirectory)" \
+          --overwrite true
+
+        echo "Portfolio deployment completed."
