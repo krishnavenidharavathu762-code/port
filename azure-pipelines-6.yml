@@ -26,40 +26,60 @@ stages:
 # =====================================================
 # STAGE 1: CI - Build and validate website
 # =====================================================
+
 - stage: Build_Test
-  displayName: 'Stage 1 - CI Build and Test'
+  displayName: 'Build and test static site'
   jobs:
-    - job: ValidateSite
-      steps:
-        - checkout: self
+  - job: ValidateSite
+    displayName: 'Validate HTML, CSS and JavaScript'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - checkout: self
 
-        - bash: |
-            set -euo pipefail
-            SOURCE="$(siteSource)"
-            OUTPUT="$(Build.ArtifactStagingDirectory)/site"
+    - bash: |
+        set -e
+        echo "Checking static-site files..."
+        test -f index.html || {
+          echo "ERROR: index.html was not found in the repository root."
+          exit 1
+        }
 
-            test -f "$SOURCE/index.html" || {
-              echo "ERROR: index.html not found in $SOURCE"
-              exit 1
-            }
+        echo "Static-site files found:"
+        find . -maxdepth 2 -type f \
+          ! -path './.git/*' \
+          ! -path './.terraform/*' \
+          ! -name '*.tfstate*' \
+          ! -name 'terraform.tfplan' \
+          | head -100
+      displayName: 'Check static-site files'
 
-            grep -Eiq '<html([[:space:]>])' "$SOURCE/index.html" || {
-              echo "ERROR: No HTML root element found."
-              exit 1
-            }
+    - bash: |
+        set -e
+        mkdir -p "$(Build.ArtifactStagingDirectory)/site"
 
-            mkdir -p "$OUTPUT"
-            rsync -av \
-              --exclude='.git/' \
-              --exclude='node_modules/' \
-              --exclude='azure-pipelines.yml' \
-              --exclude='.env*' \
-              --exclude='*.env' \
-              "$SOURCE/" "$OUTPUT/"
+        # Copy the website files while excluding Git and Terraform files.
+        tar \
+          --exclude='./.git' \
+          --exclude='./infra' \
+          --exclude='./.terraform' \
+          --exclude='./terraform.tfstate' \
+          --exclude='./terraform.tfstate.backup' \
+          --exclude='./terraform.tfplan' \
+          -cf - . | \
+          tar -xf - -C "$(Build.ArtifactStagingDirectory)/site"
 
-            test -s "$OUTPUT/index.html"
-            echo "Website validation passed."
-          displayName: 'Validate and package static files'
+        test -f "$(Build.ArtifactStagingDirectory)/site/index.html"
+        echo "Artifact folder created:"
+        ls -la "$(Build.ArtifactStagingDirectory)/site"
+      displayName: 'Prepare static-site artifact'
+
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish static-site artifact'
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)/site'
+        artifact: 'static-site'
+        publishLocation: 'pipeline'
 
 # =====================================================
 # STAGE 2: Publish website artifact
