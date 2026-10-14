@@ -1,0 +1,71 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  storageAccountName: 'kittuportfoliostg2026'
+
+steps:
+  - checkout: self
+
+  - task: AzureCLI@2
+    displayName: 'Deploy Portfolio to Azure Storage'
+    inputs:
+      azureSubscription: 'krishna-conn'
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+
+        WEBSITE_DIR="$(Build.SourcesDirectory)"
+
+        echo "Checking portfolio files..."
+
+        if [ ! -f "$WEBSITE_DIR/index.html" ]; then
+          echo "ERROR: index.html not found."
+          exit 1
+        fi
+
+        if [ ! -f "$WEBSITE_DIR/profile.jpg" ]; then
+          echo "ERROR: profile.jpg not found."
+          exit 1
+        fi
+
+        echo "Checking Azure login..."
+        az account show --output table
+
+        echo "Enabling static website if needed..."
+        az storage blob service-properties update \
+          --account-name "$(storageAccountName)" \
+          --auth-mode login \
+          --static-website \
+          --index-document index.html \
+          --404-document 404.html
+
+        echo "Uploading portfolio files..."
+        az storage blob upload-batch \
+          --account-name "$(storageAccountName)" \
+          --auth-mode login \
+          --destination '$web' \
+          --source "$WEBSITE_DIR" \
+          --pattern 'index.html' \
+          --overwrite true
+
+        az storage blob upload \
+          --account-name "$(storageAccountName)" \
+          --auth-mode login \
+          --container-name '$web' \
+          --name 'profile.jpg' \
+          --file "$WEBSITE_DIR/profile.jpg" \
+          --content-type 'image/jpeg' \
+          --overwrite true
+
+        echo "Retrieving website endpoint..."
+        az storage account show \
+          --name "$(storageAccountName)" \
+          --query "primaryEndpoints.web" \
+          --output tsv
+
+        echo "Portfolio deployment completed successfully."
