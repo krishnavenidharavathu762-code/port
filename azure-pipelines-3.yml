@@ -1,0 +1,91 @@
+
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  storageAccountName: 'kittuportfoliostg2026'
+  websiteContainer: '$web'
+
+steps:
+  - checkout: self
+
+  - task: AzureCLI@2
+    displayName: 'Deploy Portfolio to Azure Storage'
+    inputs:
+      azureSubscription: 'krishna-conn'
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        set -euo pipefail
+
+        WEBSITE_DIR="$(Build.SourcesDirectory)"
+        STORAGE_ACCOUNT="$(storageAccountName)"
+
+        echo "Checking portfolio files..."
+
+        if [ ! -f "$WEBSITE_DIR/index.html" ]; then
+          echo "ERROR: index.html not found in repository root."
+          exit 1
+        fi
+
+        if [ ! -f "$WEBSITE_DIR/profile.jpg" ]; then
+          echo "ERROR: profile.jpg not found in repository root."
+          exit 1
+        fi
+
+        echo "Checking Azure login..."
+        az account show --output table
+
+        echo "Enabling static website hosting..."
+        az storage blob service-properties update \
+          --account-name "$STORAGE_ACCOUNT" \
+          --auth-mode login \
+          --static-website \
+          --index-document index.html \
+          --404-document 404.html
+
+        echo "Uploading index.html..."
+        az storage blob upload \
+          --account-name "$STORAGE_ACCOUNT" \
+          --auth-mode login \
+          --container-name '$web' \
+          --name index.html \
+          --file "$WEBSITE_DIR/index.html" \
+          --content-type text/html \
+          --overwrite true
+
+        echo "Uploading profile.jpg..."
+        az storage blob upload \
+          --account-name "$STORAGE_ACCOUNT" \
+          --auth-mode login \
+          --container-name '$web' \
+          --name profile.jpg \
+          --file "$WEBSITE_DIR/profile.jpg" \
+          --content-type image/jpeg \
+          --overwrite true
+
+        if [ -f "$WEBSITE_DIR/404.html" ]; then
+          echo "Uploading 404.html..."
+          az storage blob upload \
+            --account-name "$STORAGE_ACCOUNT" \
+            --auth-mode login \
+            --container-name '$web' \
+            --name 404.html \
+            --file "$WEBSITE_DIR/404.html" \
+            --content-type text/html \
+            --overwrite true
+        fi
+
+        echo "Getting website endpoint..."
+        ENDPOINT=$(az storage account show \
+          --name "$STORAGE_ACCOUNT" \
+          --query "primaryEndpoints.web" \
+          --output tsv)
+
+        echo "=================================="
+        echo "Portfolio deployment successful!"
+        echo "Website URL: $ENDPOINT"
+        echo "=================================="
