@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dharavathu Krishnaveni | Cloud & DevOps Engineer</title>
+
+<meta name="description" content="Portfolio of Dharavathu Krishnaveni, a Computer Science graduate interested in cloud computing, DevOps, Azure and AWS.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+:root {
+    --bg: #f3f8f7;
+    --alt: #e6f1ef;
+    --surface: #ffffff;
+    --ink: #12302c;
+    --muted: #4d6a66;
+    --line: #d3e3e0;
+    --accent: #0d8f7e;
+    --cloud: #cfeee8;
+    --shadow: 0 12px 35px rgba(18, 48, 44, 0.07);
+    --head: 'Bricolage Grotesque', sans-serif;
+    --body: 'IBM Plex Sans', sans-serif;
+}
+
+:root[data-theme="dark"] {
+    --bg: #0b1b1a;
+    --alt: #102524;
+    --surface: #14302e;
+    --ink: #e6f4f1;
+    --muted: #93b5b0;
+    --line: #1f3f3c;
+    --accent: #3ddbc0;
+    --cloud: #18413d;
+    --shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 85px;
+}
+
+body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.7;
+    transition: background 0.3s, color 0.3s;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+button, input, textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    color: inherit;
+}
+
+img {
+    max-width: 100%;
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--head);
+    line-height: 1.2;
+}
+
+section {
+    scroll-margin-top: 80px;
+}
+
+.container {
+    width: min(1120px, 92%);
+    margin: auto;
+}
+
+/* NAVIGATION */
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+}
+
+.navbar {
+    width: min(1120px, 92%);
+    margin: auto;
+    min-height: 76px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    color: var(--ink);
+    font: 700 1.35rem var(--head);
+    white-space: nowrap;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    list-style: none;
+}
+
+.nav-links a {
+    color: var(--muted);
+    font-size: 0.94rem;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--accent);
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.nav-buttons button {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+}
+
+.menu-btn {
+    display: none;
+}
+
+/* BUTTONS */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 12px 20px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    font-weight: 600;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+}
+
+.primary-btn {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+}
+
+.secondary-btn {
+    color: var(--ink);
+    background: var(--surface);
+}
+
+/* HOME SECTION */
+
+.hero {
+    width: min(1120px, 92%);
+    margin: auto;
+    min-height: 610px;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 65px;
+    align-items: center;
+    padding: 65px 0;
+}
+
+.hello {
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+.hero h1 {
+    font-size: clamp(2.4rem, 5vw, 4.1rem);
+    letter-spacing: -1.8px;
+    overflow-wrap: anywhere;
+}
+
+.hero h2 {
+    margin-top: 16px;
+    color: var(--accent);
+    font-size: 1.55rem;
+    font-weight: 500;
+}
+
+.hero-text {
+    max-width: 560px;
+    color: var(--muted);
+    margin: 22px 0 27px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.social-icons {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.social-icons a,
+.footer-social a {
+    width: 43px;
+    height: 43px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--ink);
+    background: var(--surface);
+    font-size: 1.1rem;
+    transition: 0.2s;
+}
+
+.social-icons a:hover,
+.footer-social a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-3px);
+}
+
+/* YOUR PROFILE PHOTO */
+
+.hero-image {
+    margin: 0;
+    text-align: center;
+    position: relative;
+}
+
+.hero-image img {
+    display: block;
+    width: min(100%, 365px);
+    height: 445px;
+    object-fit: cover;
+    object-position: center top;
+    margin: auto;
+    border-radius: 180px 180px 24px 24px;
+    border: 5px solid var(--surface);
+    box-shadow: var(--shadow);
+    outline: 1px solid var(--line);
+}
+
+.hero-image figcaption {
+    margin-top: 20px;
+    color: var(--muted);
+    font-size: 0.93rem;
+}
+
+/* SECTION COMMON STYLES */
+
+.section {
+    padding: 85px 0;
+}
+
+.skills-section,
+.education-section,
+.contact-section {
+    background: var(--alt);
+}
+
+.section-title {
+    margin-bottom: 42px;
+}
+
+.section-title p {
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.section-title h2 {
+    font-size: clamp(2rem, 4vw, 2.7rem);
+    letter-spacing: -0.8px;
+}
+
+.section-title h2::after {
+    content: "";
+    display: block;
+    width: 58px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 5px;
+    margin-top: 15px;
+}
+
+/* ABOUT SECTION */
+
+.about-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 65px;
+    align-items: center;
+}
+
+.about-image img {
+    display: block;
+    width: 100%;
+    max-width: 280px;
+    height: 350px;
+    object-fit: cover;
+    object-position: center top;
+    margin: auto;
+    border-radius: 18px;
+    border: 3px solid var(--accent);
+    box-shadow: var(--shadow);
+}
+
+.about-content h3 {
+    font-size: 1.6rem;
+    margin-bottom: 18px;
+}
+
+.about-content p {
+    color: var(--muted);
+    margin-bottom: 14px;
+}
+
+.about-info {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    margin-top: 25px;
+}
+
+.about-info div {
+    display: flex;
+    flex-direction: column;
+    border-left: 3px solid var(--accent);
+    padding-left: 13px;
+    overflow-wrap: anywhere;
+}
+
+.about-info strong {
+    font-family: var(--head);
+}
+
+.about-info span {
+    color: var(--muted);
+    font-size: 0.94rem;
+}
+
+/* SKILLS */
+
+.skills-container {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.skill-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 25px 20px;
+    transition: transform 0.25s, border-color 0.25s;
+}
+
+.skill-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--accent);
+}
+
+.skill-card > i {
+    color: var(--accent);
+    font-size: 2rem;
+    margin-bottom: 18px;
+}
+
+.skill-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 9px;
+}
+
+.skill-card p {
+    color: var(--muted);
+    font-size: 0.92rem;
+}
+
+/* PROJECTS */
+
+.projects-container,
+.education-container {
+    display: grid;
+    gap: 22px;
+}
+
+.project-card,
+.education-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 22px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 15px;
+    padding: 27px;
+    box-shadow: var(--shadow);
+}
+
+.project-card:first-child {
+    border-left: 5px solid var(--accent);
+}
+
+.project-icon,
+.education-icon {
+    flex: 0 0 54px;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: var(--alt);
+    color: var(--accent);
+    font-size: 1.4rem;
+}
+
+.project-content,
+.education-card > div:last-child {
+    flex: 1;
+    min-width: 0;
+}
+
+.project-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: flex-start;
+}
+
+.project-head h3,
+.education-card h3 {
+    font-size: 1.2rem;
+}
+
+.year,
+.education-year {
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.project-card ul,
+.education-card ul {
+    padding-left: 22px;
+    margin-top: 15px;
+}
+
+.project-card li,
+.education-card li {
+    color: var(--muted);
+    margin: 7px 0;
+}
+
+.project-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 18px;
+}
+
+.project-tech span {
+    padding: 5px 12px;
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    background: var(--bg);
+    font-size: 0.85rem;
+    color: var(--ink);
+}
+
+/* INTERNSHIPS AND EDUCATION */
+
+.education-year {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.education-card p {
+    color: var(--muted);
+    margin-top: 7px;
+}
+
+.education-card strong {
+    display: block;
+    margin-top: 10px;
+}
+
+/* CONTACT */
+
+.contact-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 55px;
+}
+
+.contact-info h3 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+}
+
+.contact-info > p {
+    color: var(--muted);
+    margin-bottom: 25px;
+}
+
+.contact-item {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.contact-item > i {
+    flex: 0 0 45px;
+    width: 45px;
+    height: 45px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--accent);
+    border: 1px solid var(--line);
+}
+
+.contact-item h4 {
+    font-size: 1rem;
+}
+
+.contact-item p {
+    overflow-wrap: anywhere;
+    font-size: 0.94rem;
+}
+
+.contact-item a {
+    color: var(--muted);
+}
+
+.contact-item a:hover {
+    color: var(--accent);
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding: 27px;
+    border-radius: 15px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+}
+
+.contact-form label {
+    font-weight: 600;
+    font-size: 0.94rem;
+    margin-top: 6px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--bg);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    outline: none;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    border-color: var(--accent);
+}
+
+.contact-form textarea {
+    resize: vertical;
+    min-height: 130px;
+}
+
+.contact-form button {
+    align-self: flex-start;
+    margin-top: 12px;
+}
+
+.form-note {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+/* FOOTER */
+
+footer {
+    padding: 42px 4%;
+    text-align: center;
+    border-top: 1px solid var(--line);
+}
+
+.footer-content h3 {
+    font-size: 1.5rem;
+}
+
+.footer-content p {
+    color: var(--muted);
+    margin-top: 8px;
+}
+
+.footer-social {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.copyright {
+    font-size: 0.9rem;
+    margin-top: 23px !important;
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 1000px) {
+    .nav-links {
+        gap: 13px;
+    }
+
+    .nav-links a {
+        font-size: 0.88rem;
+    }
+
+    .hero {
+        gap: 35px;
+    }
+
+    .skills-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 860px) {
+    .navbar {
+        min-height: 70px;
+    }
+
+    .menu-btn {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        padding: 12px 4%;
+        background: var(--bg);
+        border-bottom: 1px solid var(--line);
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+    }
+
+    .nav-links.open {
+        display: flex;
+    }
+
+    .nav-links a {
+        display: block;
+        padding: 12px;
+        font-size: 1rem;
+    }
+
+    .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 55px 0;
+        gap: 40px;
+    }
+
+    .hero-text {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-buttons,
+    .social-icons {
+        justify-content: center;
+    }
+
+    .hero-image {
+        grid-row: 1;
+    }
+
+    .hero-image img {
+        width: min(75%, 320px);
+        height: 390px;
+    }
+
+    .about-container {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+
+    .about-image img {
+        max-width: 250px;
+        height: 315px;
+    }
+
+    .contact-container {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+
+    .section {
+        padding: 65px 0;
+    }
+}
+
+@media (max-width: 560px) {
+    .logo {
+        font-size: 1.1rem;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero h2 {
+        font-size: 1.3rem;
+    }
+
+    .hero-image img {
+        width: min(85%, 285px);
+        height: 350px;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .skills-container {
+        grid-template-columns: 1fr;
+    }
+
+    .about-info {
+        grid-template-columns: 1fr;
+    }
+
+    .project-card,
+    .education-card {
+        flex-direction: column;
+        padding: 21px;
+        gap: 15px;
+    }
+
+    .project-head {
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .contact-form {
+        padding: 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVIGATION -->
+
+<header>
+    <nav class="navbar">
+        <a class="logo" href="#home">Krishnaveni.</a>
+
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#experience">Internships</a></li>
+            <li><a href="#education">Education</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+
+        <div class="nav-buttons">
+            <button id="themeBtn" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+
+            <button class="menu-btn" id="menuBtn"
+                    aria-label="Open navigation menu"
+                    aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+</header>
+
+<main>
+
+<!-- HOME -->
+
+<section id="home" class="hero">
+    <div class="hero-content">
+        <p class="hello">HELLO, I'M</p>
+
+        <h1>Dharavathu Krishnaveni</h1>
+
+        <h2>Cloud &amp; DevOps Enthusiast</h2>
+
+        <p class="hero-text">
+            I am a Computer Science graduate interested in DevOps,
+            cloud computing and automation. I have hands-on knowledge
+            of AWS, Docker, Kubernetes, Terraform, Linux, Git and CI/CD.
+            I enjoy automating deployment processes and working with
+            cloud infrastructure.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="#projects" class="btn primary-btn">
+                <i class="fas fa-folder-open"></i>
+                View Projects
+            </a>
+
+            <a href="Krishnaveni_Resume.pdf"
+               class="btn secondary-btn"
+               download>
+                <i class="fas fa-download"></i>
+                Download Resume
+            </a>
+        </div>
+
+        <div class="social-icons">
+            <a href="https://github.com/DharavathuKrishnaveni"
+               target="_blank" rel="noopener noreferrer"
+               aria-label="GitHub">
+                <i class="fab fa-github"></i>
+            </a>
+
+            <a href="https://linkedin.com/in/krishnaveni-dharavathu"
+               target="_blank" rel="noopener noreferrer"
+               aria-label="LinkedIn">
+                <i class="fab fa-linkedin-in"></i>
+            </a>
+
+            <a href="mailto:krishnavenidharavathu762@gmail.com"
+               aria-label="Email">
+                <i class="fas fa-envelope"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- YOUR PHOTO -->
+   <figure class="hero-image">
+    <img
+        src="profile.jpg"
+        alt="Dharavathu Krishnaveni"
+        fetchpriority="high"
+        onerror="this.onerror=null;this.src='profile.jpg';">
+
+    <figcaption>
+        Cloud Computing · DevOps · Automation
+    </figcaption>
+</figure>
+</section>
+
+<!-- ABOUT -->
+
+<section id="about" class="section">
+    <div class="container">
+
+        <div class="section-title">
+            <p>GET TO KNOW ME</p>
+            <h2>About Me</h2>
+        </div>
+
+       
+
+            <div class="about-content">
+                <h3>Cloud  </h3>
+
+                <p>
+                    I am a Computer Science graduate with hands-on
+                    project experience in hybrid cloud infrastructure
+                    across Microsoft Azure and AWS.
+                </p>
+
+                <p>
+                    My technical interests include cloud infrastructure,
+                    Linux administration, containerization, automation,
+                    version control and CI/CD pipelines. I enjoy learning
+                    new technologies and solving infrastructure problems.
+                </p>
+
+                <p>
+                    I have also completed virtual internships in
+                    front-end development and AI/ML. I am looking for
+                    an entry-level opportunity where I can contribute
+                    my skills and continue learning.
+                </p>
+
+                <div class="about-info">
+                    <div>
+                        <strong>Name</strong>
+                        <span>Dharavathu Krishnaveni</span>
+                    </div>
+
+                    <div>
+                        <strong>Career Interest</strong>
+                        <span>Cloud / DevOps Engineer</span>
+                    </div>
+
+                    <div>
+                        <strong>Degree</strong>
+                        <span>B.Tech CSE, 2026</span>
+                    </div>
+
+                    <div>
+                        <strong>Email</strong>
+                        <span>krishnavenidharavathu762@gmail.com</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SKILLS -->
+
+<section id="skills" class="section skills-section">
+    <div class="container">
+
+        <div class="section-title">
+            <p>TECHNOLOGIES I WORK WITH</p>
+            <h2>Technical Skills</h2>
+        </div>
+
+        <div class="skills-container">
+
+            <div class="skill-card">
+                <i class="fab fa-microsoft"></i>
+                <h3>Microsoft Azure</h3>
+                <p>Virtual Machines, VNets, NSGs, Active Directory,
+                   Microsoft Entra ID and VPN.</p>
+            </div>
+
+            <div class="skill-card">
+                <i class="fab fa-aws"></i>
+                <h3>AWS</h3>
+                <p>EC2, VPC, subnets, route tables, security groups
+                   and cloud networking.</p>
+            </div>
+
+            <div class="skill-card">
+                <i class="fab fa-docker"></i>
+                <h3>Docker</h3>
+                <p>Container fundamentals and application containerization.</p>
+            </div>
+
+            <div class="skill-card">
+                <i class="fas fa-dharmachakra"></i>
+                <h3>Kubernetes</h3>
+                <p>Container orchestration fundamentals.</p>
+            </div>
+
+            <div class="skill-card">
+                <i class="fas fa-layer-group"></i>
+                <h3>Terraform</h3>
+                <p>Infrastructure as Code fundamentals.</p>
+            </div>
+
+            <div class="skill-card">
+                <i class="fab fa-linux"></i>
+                <h3>Linux</h3>
+                <p>Command-line operations, user management
+                   and system administration.</p>
+            </div>
+
+            <div class="skill-card">
+                <i class="fab fa-github"></i>
+                <h3>Git &amp; GitHub</h3>
+                <p>Version control, repositories and collaboration.</p>
+            </div>
+
+            <div class="skill-card">
+                <i class="fas fa-code"></i>
+                <h3>CI/CD &amp; Programming</h3>
+                <p>CI/CD fundamentals, Python, Java and JavaScript.</p>
+            </div>
+
+            <div class="skill-card">
+                <i class="fas fa-database"></i>
+                <h3>Databases</h3>
+                <p>MySQL and MongoDB fundamentals.</p>
+            </div>
+
+            <div class="skill-card">
+                <i class="fas fa-laptop-code"></i>
+                <h3>Web Development</h3>
+                <p>HTML, CSS, JavaScript and responsive web design.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- PROJECTS -->
+
+<section id="projects" class="section">
+    <div class="container">
+
+        <div class="section-title">
+            <p>MY RECENT WORK</p>
+            <h2>Projects</h2>
+        </div>
+
+        <div class="projects-container">
+
+            <article class="project-card">
+                <div class="project-icon">
+                    <i class="fas fa-cloud"></i>
+                </div>
+
+                <div class="project-content">
+                    <div class="project-head">
+                        <h3>Hybrid Cloud Identity and Secure Access Infrastructure</h3>
+                        <span class="year">2026</span>
+                    </div>
+
+                    <ul>
+                        <li>
+                            Connected Azure and AWS networks over a
+                            Site-to-Site VPN with private networking,
+                            routing and security controls.
+                        </li>
+                        <li>
+                            Set up an Azure-hosted domain controller
+                            with Active Directory Domain Services and DNS.
+                        </li>
+                        <li>
+                            Configured users, organizational units,
+                            security groups, Group Policy and access controls.
+                        </li>
+                        <li>
+                            Worked on centralized identity management
+                            using Microsoft Entra ID and least-privilege access.
+                        </li>
+                    </ul>
+
+                    <div class="project-tech">
+                        <span>Azure</span>
+                        <span>AWS</span>
+                        <span>Active Directory</span>
+                        <span>Entra ID</span>
+                        <span>VPN</span>
+                        <span>Networking</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="project-card">
+                <div class="project-icon">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+
+                <div class="project-content">
+                    <div class="project-head">
+                        <h3>Event-Graph Framework for Quantum Program Observability</h3>
+                        <span class="year">2026</span>
+                    </div>
+
+                    <ul>
+                        <li>
+                            Worked on tracing gate operations, qubit states
+                            and execution order across quantum circuit runs.
+                        </li>
+                        <li>
+                            Modeled execution as a dependency graph to
+                            visualize control flow and data dependencies.
+                        </li>
+                        <li>
+                            Supported replay of captured executions to
+                            help analyze program behavior.
+                        </li>
+                    </ul>
+
+                    <div class="project-tech">
+                        <span>Python</span>
+                        <span>Quantum Computing</span>
+                        <span>Observability</span>
+                        <span>Data Visualization</span>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+    </div>
+</section>
+
+<!-- INTERNSHIPS -->
+
+<section id="experience" class="section education-section">
+    <div class="container">
+
+        <div class="section-title">
+            <p>WHERE I HAVE WORKED</p>
+            <h2>Internships</h2>
+        </div>
+
+        <div class="education-container">
+
+            <article class="education-card">
+                <div class="education-icon">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+
+                <div>
+                    <span class="education-year">2024</span>
+                    <h3>Front-End Development Intern</h3>
+                    <p>Cognifyz Technologies · Virtual Internship</p>
+
+                    <ul>
+                        <li>
+                            Developed responsive web pages using HTML,
+                            CSS, JavaScript and SCSS.
+                        </li>
+                        <li>
+                            Worked with asynchronous JavaScript and REST APIs.
+                        </li>
+                        <li>
+                            Practiced accessible markup and responsive layouts.
+                        </li>
+                    </ul>
+                </div>
+            </article>
+
+            <article class="education-card">
+                <div class="education-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+
+                <div>
+                    <span class="education-year">2024</span>
+                    <h3>AI/ML Intern</h3>
+                    <p>AICTE · Virtual Internship</p>
+
+                    <ul>
+                        <li>
+                            Worked on image classification for waste
+                            categories such as recyclable, organic and hazardous.
+                        </li>
+                        <li>
+                            Practiced dataset preprocessing, labeling
+                            and model validation.
+                        </li>
+                        <li>
+                            Explored applications of machine learning
+                            in sustainable waste management.
+                        </li>
+                    </ul>
+                </div>
+            </article>
+
+        </div>
+    </div>
+</section>
+
+<!-- EDUCATION -->
+
+<section id="education" class="section">
+    <div class="container">
+
+        <div class="section-title">
+            <p>MY ACADEMIC JOURNEY</p>
+            <h2>Education &amp; Certifications</h2>
+        </div>
+
+        <div class="education-container">
+
+            <article class="education-card">
+                <div class="education-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+
+                <div>
+                    <span class="education-year">2026</span>
+                    <h3>B.Tech, Computer Science and Engineering</h3>
+                    <p>Vishnu Institute of Technology, Bhimavaram</p>
+                    <strong>GPA: 8.48/10</strong>
+                </div>
+            </article>
+
+            <article class="education-card">
+                <div class="education-icon">
+                    <i class="fas fa-school"></i>
+                </div>
+
+                <div>
+                    <span class="education-year">2022</span>
+                    <h3>Intermediate (MPC)</h3>
+                    <p>Chaitanya Junior College, Nandigama</p>
+                    <strong>GPA: 6.1/10</strong>
+                </div>
+            </article>
+
+            <article class="education-card">
+                <div class="education-icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+
+                <div>
+                    <span class="education-year">2020</span>
+                    <h3>SSC</h3>
+                    <p>Zilla Parishad High School, Nandigama</p>
+                    <strong>GPA: 9.1/10</strong>
+                </div>
+            </article>
+
+            <article class="education-card">
+                <div class="education-icon">
+                    <i class="fas fa-certificate"></i>
+                </div>
+
+                <div>
+                    <h3>Certifications</h3>
+
+                    <div class="project-tech">
+                        <span>MongoDB · GeeksforGeeks</span>
+                        <span>Java Fundamentals · edX</span>
+                        <span>Python Basics · Infosys Springboard</span>
+                        <span>Fundamentals of Deep Learning · NVIDIA</span>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT -->
+
+<section id="contact" class="section contact-section">
+    <div class="container">
+
+        <div class="section-title">
+            <p>LET'S CONNECT</p>
+            <h2>Contact Me</h2>
+        </div>
+
+        <div class="contact-container">
+
+            <div class="contact-info">
+                <h3>Have an opportunity?</h3>
+
+                <p>
+                    I am interested in entry-level cloud, infrastructure
+                    and DevOps opportunities. Feel free to contact me
+                    about jobs, projects or collaborations.
+                </p>
+
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <h4>Email</h4>
+                        <p>
+                            <a href="mailto:krishnavenidharavathu762@gmail.com">
+                                krishnavenidharavathu762@gmail.com
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                        <h4>Phone</h4>
+                        <p>
+                            <a href="tel:+919030417837">
+                                +91 90304 17837
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <i class="fab fa-linkedin-in"></i>
+                    <div>
+                        <h4>LinkedIn</h4>
+                        <p>
+                            <a href="https://linkedin.com/in/krishnaveni-dharavathu"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                linkedin.com/in/krishnaveni-dharavathu
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <i class="fab fa-github"></i>
+                    <div>
+                        <h4>GitHub</h4>
+                        <p>
+                            <a href="https://github.com/DharavathuKrishnaveni"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                github.com/DharavathuKrishnaveni
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <form id="contactForm" class="contact-form">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" required>
+
+                <label for="email">Your Email</label>
+                <input type="email" id="email" required>
+
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" required>
+
+                <label for="message">Message</label>
+                <textarea id="message" rows="5" required></textarea>
+
+                <button type="submit" class="btn primary-btn">
+                    <i class="fas fa-paper-plane"></i>
+                    Send Message
+                </button>
+
+                <p class="form-note" id="formNote" role="status"></p>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+
+<footer>
+    <div class="footer-content">
+        <h3>Dharavathu Krishnaveni</h3>
+
+        <p>
+            Cloud Computing | DevOps | Azure | AWS | Linux | Automation
+        </p>
+
+        <div class="footer-social">
+            <a href="https://github.com/DharavathuKrishnaveni"
+               target="_blank" rel="noopener noreferrer"
+               aria-label="GitHub">
+                <i class="fab fa-github"></i>
+            </a>
+
+            <a href="https://linkedin.com/in/krishnaveni-dharavathu"
+               target="_blank" rel="noopener noreferrer"
+               aria-label="LinkedIn">
+                <i class="fab fa-linkedin-in"></i>
+            </a>
+
+            <a href="mailto:krishnavenidharavathu762@gmail.com"
+               aria-label="Email">
+                <i class="fas fa-envelope"></i>
+            </a>
+        </div>
+
+        <p class="copyright">
+            &copy; <span id="yr"></span> Dharavathu Krishnaveni.
+            All rights reserved.
+        </p>
+    </div>
+</footer>
+
+<script>
+const root = document.documentElement;
+const themeBtn = document.getElementById("themeBtn");
+const menuBtn = document.getElementById("menuBtn");
+const navLinks = document.getElementById("navLinks");
+
+/* DARK MODE */
+
+try {
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "dark" || savedTheme === "light") {
+        root.dataset.theme = savedTheme;
+    }
+} catch (error) {
+}
+
+function isDark() {
+    if (root.dataset.theme) {
+        return root.dataset.theme === "dark";
+    }
+
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
+function updateThemeIcon() {
+    themeBtn.innerHTML = isDark()
+        ? '<i class="fas fa-sun"></i>'
+        : '<i class="fas fa-moon"></i>';
+}
+
+updateThemeIcon();
+
+themeBtn.addEventListener("click", () => {
+    const nextTheme = isDark() ? "light" : "dark";
+
+    root.dataset.theme = nextTheme;
+
+    try {
+        localStorage.setItem("theme", nextTheme);
+    } catch (error) {
+    }
+
+    updateThemeIcon();
+});
+
+/* MOBILE MENU */
+
+menuBtn.addEventListener("click", () => {
+    const isOpen = navLinks.classList.toggle("open");
+
+    menuBtn.setAttribute("aria-expanded", String(isOpen));
+
+    menuBtn.innerHTML = isOpen
+        ? '<i class="fas fa-xmark"></i>'
+        : '<i class="fas fa-bars"></i>';
+});
+
+navLinks.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+        menuBtn.setAttribute("aria-expanded", "false");
+        menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+    });
+});
+
+/* ACTIVE NAVIGATION LINK */
+
+const sections = document.querySelectorAll("main section[id]");
+const links = navLinks.querySelectorAll("a");
+
+if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                links.forEach(link => {
+                    link.classList.toggle(
+                        "active",
+                        link.getAttribute("href") === "#" + entry.target.id
+                    );
+                });
+            }
+        });
+    }, {
+        rootMargin: "-30% 0px -60% 0px"
+    });
+
+    sections.forEach(section => observer.observe(section));
+}
+
+/* CONTACT FORM */
+
+document.getElementById("contactForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const getValue = id =>
+        document.getElementById(id).value.trim();
+
+    const name = getValue("name");
+    const email = getValue("email");
+    const subject = getValue("subject");
+    const message = getValue("message");
+
+    const body =
+        message + "\n\nFrom: " + name + " (" + email + ")";
+
+    const mailto =
+        "mailto:krishnavenidharavathu762@gmail.com" +
+        "?subject=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(body);
+
+    document.getElementById("formNote").textContent =
+        "Opening your email application. If it does not open, email me directly.";
+
+    window.location.href = mailto;
+});
+
+/* CURRENT YEAR */
+
+document.getElementById("yr").textContent =
+    new Date().getFullYear();
+</script>
+
+</body>
+</html>
