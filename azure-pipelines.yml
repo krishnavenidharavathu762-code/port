@@ -1,12 +1,10 @@
-
 trigger:
   - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 variables:
-  websiteDirectory: '$(Build.SourcesDirectory)/site'
   storageAccountName: 'kittuportfoliostg2026'
 
 steps:
@@ -15,26 +13,38 @@ steps:
   - task: AzureCLI@2
     displayName: 'Deploy Portfolio to Azure Storage'
     inputs:
-      azureSubscription: 'github.com_krishnavenidharavathu762-code'
-      scriptType: bash
-      scriptLocation: inlineScript
+      azureSubscription: '
+krishna-conn'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
       inlineScript: |
         set -euo pipefail
 
-        echo "Checking website files..."
+        echo "Checking portfolio files..."
 
-        test -f "$(websiteDirectory)/index.html" || {
-          echo "ERROR: index.html not found in site folder"
-          exit 1
-        }
+        test -f "$(Build.SourcesDirectory)/index.html"
+        test -f "$(Build.SourcesDirectory)/profile.jpg"
 
-        echo "Uploading portfolio files to Azure Storage..."
+        echo "Uploading index.html..."
 
-        az storage blob upload-batch \
+        az storage blob upload \
           --account-name "$(storageAccountName)" \
+          --container-name '$web' \
+          --name 'index.html' \
+          --file "$(Build.SourcesDirectory)/index.html" \
           --auth-mode login \
-          --destination '$web' \
-          --source "$(websiteDirectory)" \
-          --overwrite true
+          --overwrite true \
+          --content-type 'text/html; charset=utf-8'
 
-        echo "Portfolio deployment completed."
+        echo "Uploading profile.jpg..."
+
+        az storage blob upload \
+          --account-name "$(storageAccountName)" \
+          --container-name '$web' \
+          --name 'profile.jpg' \
+          --file "$(Build.SourcesDirectory)/profile.jpg" \
+          --auth-mode login \
+          --overwrite true \
+          --content-type 'image/jpeg'
+
+        echo "Portfolio deployment completed successfully!"
