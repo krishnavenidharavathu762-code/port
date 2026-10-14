@@ -1,0 +1,150 @@
+
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: portfolio-swa-secrets
+
+  # Change to your folder if index.html is not in the root.
+  - name: siteSource
+    value: '.'
+
+stages:
+
+# =====================================================
+# STAGE 1: CI - Validate the static website
+# =====================================================
+- stage: Build_Test
+  displayName: 'Stage 1 - Build and Test'
+  jobs:
+    - job: ValidateSite
+      displayName: 'Validate HTML and prepare website'
+      steps:
+        - checkout: self
+
+        - bash: |
+            set -euo pipefail
+
+            SOURCE="$(siteSource)"
+            OUTPUT="$(Build.ArtifactStagingDirectory)/site"
+
+            if [ ! -f "$SOURCE/index.html" ]; then
+              echo "ERROR: index.html not found in $SOURCE"
+              echo "Update the siteSource variable."
+              exit 1
+            fi
+
+            if ! grep -Eiq '<html([[:space:]>])' "$SOURCE/index.html"; then
+              echo "ERROR: index.html does not contain an HTML root element."
+              exit 1
+            fi
+
+            mkdir -p "$OUTPUT"
+
+            rsync -av \
+              --exclude='.git/' \
+              --exclude='node_modules/' \
+              --exclude='azure-pipelines.yml' \
+              --exclude='*.env' \
+              --exclude='.env*' \
+              --exclude='site/' \
+              "$SOURCE/" "$OUTPUT/"
+
+            if [ ! -s "$OUTPUT/index.html" ]; then
+              echo "ERROR: Deployment package has no usable index.html."
+              exit 1
+            fi
+
+            echo "Static site validated and prepared."
+            echo "Files included:"
+            find "$OUTPUT" -type f -print
+          displayName: 'Validate and prepare static files'
+
+# =====================================================
+# STAGE 2: CI - Publish the deployment artifact
+# =====================================================
+- stage: Publish
+  displayName: 'Stage 2 - Publish Artifact'
+  dependsOn: Build_Test
+  condition: succeeded()
+  jobs:
+    - job: PublishSite
+      steps:
+        - publish: '$(Build.ArtifactStagingDirectory)/site'
+          artifact: static-site
+          displayName: 'Publish static website artifact'
+
+# =====================================================
+# STAGE 3: CD - Deploy to a staging preview environment
+# =====================================================
+- stage: Deploy_Staging
+  displayName: 'Stage 3 - Deploy to Staging'
+  dependsOn: Publish
+  condition: |
+    and(
+      succeeded(),
+      eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    )
+  jobs:
+    - deployment: DeployStaging
+      displayName: 'Deploy static site to staging'
+      environment: portfolio-staging
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - download: current
+                artifact: static-site
+
+              - task: AzureStaticWebApp@0
+                displayName: 'Deploy staging preview'
+                inputs:
+                  cwd: '$(Pipeline.Workspace)/static-site'
+                  app_location: '/'
+                  output_location: ''
+                  skip_app_build: true
+                  skip_api_build: true
+                  deployment_environment: 'staging'
+                  azure_static_web_apps_api_token: $(swaDeploymentToken)
+
+# =====================================================
+# STAGE 4: CD - Deploy to production after approval
+# =====================================================
+- stage: Deploy_Production
+  displayName: 'Stage 4 - Deploy to Production'
+  dependsOn: Deploy_Staging
+  condition: |
+    and(
+      succeeded(),
+      eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    )
+  jobs:
+    - deployment: DeployProduction
+      displayName: 'Deploy static site to production'
+      environment: portfolio-production
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - download: current
+                artifact: static-site
+
+              - task: AzureStaticWebApp@0
+                displayName: 'Deploy production website'
+                inputs:
+                  cwd: '$(Pipeline.Workspace)/static-site'
+                  app_location: '/'
+                  output_location: ''
+                  skip_app_build: true
+                  skip_api_build: true
+                  azure_static_web_apps_api_token: $(swaDeploymentToken)
